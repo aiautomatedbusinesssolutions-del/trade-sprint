@@ -58,6 +58,11 @@ export function TradeHistory() {
                   <p className="text-xs text-slate-500">
                     Month {trade.month + 1} &middot; {formatShares(trade.shares)} shares @ {formatCurrency(trade.priceAtExecution)}
                   </p>
+                  {trade.reason && (
+                    <p className="text-xs text-slate-500 italic mt-0.5">
+                      &ldquo;{trade.reason}&rdquo;
+                    </p>
+                  )}
                 </div>
               </div>
               <p

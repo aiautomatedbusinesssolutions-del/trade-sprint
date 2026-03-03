@@ -4,8 +4,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress-bar";
+import { InfoTooltip } from "@/components/ui/tooltip";
 import { formatCurrency, formatPercent } from "@/lib/utils/format";
 import { STARTING_BALANCE } from "@/lib/constants/tickers";
+import { GLOSSARY } from "@/lib/constants/glossary";
+import { YEAR_EVENTS } from "@/lib/constants/year-events";
 import type { AnalysisResult, PortfolioSnapshot } from "@/lib/types";
 import {
   AreaChart,
@@ -17,11 +20,17 @@ import {
   ReferenceLine,
 } from "recharts";
 
+interface BenchmarkReturn {
+  value: number;
+  percent: number;
+}
+
 interface AnalysisScreenProps {
   analysis: AnalysisResult;
   actualYear: number;
   finalValue: number;
   portfolioSnapshots: PortfolioSnapshot[];
+  benchmarkReturn: BenchmarkReturn | null;
   onNewSprint: () => void;
 }
 
@@ -77,6 +86,7 @@ export function AnalysisScreen({
   actualYear,
   finalValue,
   portfolioSnapshots,
+  benchmarkReturn,
   onNewSprint,
 }: AnalysisScreenProps) {
   const totalReturn = finalValue - STARTING_BALANCE;
@@ -108,9 +118,26 @@ export function AnalysisScreen({
           </h1>
         </div>
 
+        {/* Historical Context */}
+        {YEAR_EVENTS[actualYear] && (
+          <Card className="space-y-3 animate-fade-in-up animate-delay-200">
+            <h3 className="text-sm font-semibold text-slate-100 uppercase tracking-wide">
+              What Happened in {actualYear}
+            </h3>
+            <ul className="space-y-2">
+              {YEAR_EVENTS[actualYear].map((event, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                  <span className="text-sky-400 mt-0.5">&#x2022;</span>
+                  {event}
+                </li>
+              ))}
+            </ul>
+          </Card>
+        )}
+
         {/* Performance Summary */}
         <Card className="text-center space-y-3 animate-fade-in-up animate-delay-300">
-          <p className="text-sm text-slate-400">Final Portfolio Value</p>
+          <p className="text-sm text-slate-400">Final Portfolio Value <InfoTooltip text={GLOSSARY.totalReturn} /></p>
           <p className="text-4xl font-bold text-slate-100">
             {formatCurrency(finalValue)}
           </p>
@@ -124,6 +151,60 @@ export function AnalysisScreen({
             </Badge>
           </div>
         </Card>
+
+        {/* S&P 500 Benchmark Comparison */}
+        {benchmarkReturn && (
+          <Card className="animate-fade-in-up animate-delay-300">
+            <h3 className="text-sm font-semibold text-slate-100 uppercase tracking-wide mb-4">
+              You vs. Just Buying the S&P 500
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              {/* Your Performance */}
+              <div className={`rounded-lg p-4 text-center ${
+                totalReturn >= (benchmarkReturn.value - STARTING_BALANCE)
+                  ? "bg-emerald-500/10 border border-emerald-500/20"
+                  : "bg-slate-800/50 border border-slate-700/50"
+              }`}>
+                <p className="text-xs text-slate-400 mb-1">Your Trading</p>
+                <p className="text-2xl font-bold text-slate-100">
+                  {formatCurrency(finalValue)}
+                </p>
+                <p className={`text-sm font-medium mt-1 ${isUp ? "text-emerald-400" : "text-rose-400"}`}>
+                  {formatPercent(analysis.totalReturnPercent)}
+                </p>
+              </div>
+
+              {/* S&P 500 */}
+              <div className={`rounded-lg p-4 text-center ${
+                totalReturn < (benchmarkReturn.value - STARTING_BALANCE)
+                  ? "bg-sky-500/10 border border-sky-500/20"
+                  : "bg-slate-800/50 border border-slate-700/50"
+              }`}>
+                <p className="text-xs text-slate-400 mb-1">S&P 500 (Buy & Hold)</p>
+                <p className="text-2xl font-bold text-slate-100">
+                  {formatCurrency(benchmarkReturn.value)}
+                </p>
+                <p className={`text-sm font-medium mt-1 ${benchmarkReturn.percent >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                  {formatPercent(benchmarkReturn.percent)}
+                </p>
+              </div>
+            </div>
+
+            {/* Verdict */}
+            <div className="mt-4 text-center">
+              {totalReturn >= (benchmarkReturn.value - STARTING_BALANCE) ? (
+                <p className="text-sm text-emerald-400 font-medium">
+                  You beat the S&P 500 by {formatCurrency(finalValue - benchmarkReturn.value)}!
+                </p>
+              ) : (
+                <p className="text-sm text-sky-400 font-medium">
+                  The S&P 500 beat you by {formatCurrency(benchmarkReturn.value - finalValue)}.
+                  Most pros can&apos;t beat it either!
+                </p>
+              )}
+            </div>
+          </Card>
+        )}
 
         {/* Portfolio Performance Chart */}
         <Card className="space-y-3 animate-fade-in-up animate-delay-400">

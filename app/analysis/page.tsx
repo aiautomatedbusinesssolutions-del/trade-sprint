@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useSprintStore } from "@/lib/store/sprint-store";
 import { AnalysisScreen } from "@/components/screens/analysis-screen";
 import { LoadingScreen } from "@/components/screens/loading-screen";
+import { getStockPrice } from "@/lib/utils/calculations";
+import { BENCHMARK_TICKER, STARTING_BALANCE, TOTAL_MONTHS } from "@/lib/constants/tickers";
 import type { AnalysisResult } from "@/lib/types";
 
 export default function AnalysisPage() {
@@ -13,6 +15,7 @@ export default function AnalysisPage() {
   const actualYear = useSprintStore((s) => s.actualYear);
   const tradeHistory = useSprintStore((s) => s.tradeHistory);
   const portfolioSnapshots = useSprintStore((s) => s.portfolioSnapshots);
+  const stockData = useSprintStore((s) => s.stockData);
   const getPortfolioValue = useSprintStore((s) => s.getPortfolioValue);
   const reset = useSprintStore((s) => s.reset);
 
@@ -20,6 +23,13 @@ export default function AnalysisPage() {
   const [loading, setLoading] = useState(true);
 
   const finalValue = getPortfolioValue();
+
+  // Calculate S&P 500 benchmark: what $10K in SPY would be worth
+  const spyStartPrice = getStockPrice(stockData, BENCHMARK_TICKER, 0);
+  const spyEndPrice = getStockPrice(stockData, BENCHMARK_TICKER, TOTAL_MONTHS - 1);
+  const benchmarkReturn = spyStartPrice > 0
+    ? { value: STARTING_BALANCE * (spyEndPrice / spyStartPrice), percent: ((spyEndPrice / spyStartPrice) - 1) * 100 }
+    : null;
 
   useEffect(() => {
     if (status !== "finished") {
@@ -79,6 +89,7 @@ export default function AnalysisPage() {
       actualYear={actualYear}
       finalValue={finalValue}
       portfolioSnapshots={portfolioSnapshots}
+      benchmarkReturn={benchmarkReturn}
       onNewSprint={() => {
         reset();
         router.push("/");

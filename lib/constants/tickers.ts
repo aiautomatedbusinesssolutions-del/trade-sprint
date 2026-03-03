@@ -16,7 +16,12 @@ export const POPULAR_TICKERS = [
   "NKE",
 ];
 
+// SPY is always fetched for the S&P 500 benchmark comparison
+export const BENCHMARK_TICKER = "SPY";
+
 export const ALL_TICKERS = [
+  // Benchmark
+  "SPY",
   // Tech
   "AAPL", "MSFT", "AMZN", "GOOGL", "TSLA", "META", "NVDA", "NFLX", "ADBE", "CRM",
   "INTC", "AMD", "PYPL", "SQ", "SHOP", "UBER", "SNAP", "PINS", "ZM", "ROKU",
@@ -33,6 +38,7 @@ export const ALL_TICKERS = [
 ];
 
 export const TICKER_NAMES: Record<string, string> = {
+  SPY: "S&P 500 ETF",
   AAPL: "Apple",
   MSFT: "Microsoft",
   AMZN: "Amazon",
@@ -83,6 +89,34 @@ export const TICKER_NAMES: Record<string, string> = {
   BA: "Boeing",
   CAT: "Caterpillar",
   GE: "GE Aerospace",
+};
+
+export const TICKER_SECTORS: Record<string, string> = {
+  SPY: "Index",
+  AAPL: "Technology", MSFT: "Technology", AMZN: "Technology", GOOGL: "Technology",
+  TSLA: "Technology", META: "Technology", NVDA: "Technology", NFLX: "Technology",
+  ADBE: "Technology", CRM: "Technology", INTC: "Technology", AMD: "Technology",
+  PYPL: "Technology", SQ: "Technology", SHOP: "Technology", UBER: "Technology",
+  SNAP: "Technology", PINS: "Technology", ZM: "Technology", ROKU: "Technology",
+  JPM: "Finance", BAC: "Finance", WFC: "Finance", GS: "Finance",
+  MS: "Finance", V: "Finance", MA: "Finance", AXP: "Finance",
+  JNJ: "Healthcare", PFE: "Healthcare", UNH: "Healthcare",
+  ABBV: "Healthcare", MRK: "Healthcare", TMO: "Healthcare",
+  WMT: "Consumer", KO: "Consumer", PEP: "Consumer", NKE: "Consumer",
+  DIS: "Consumer", MCD: "Consumer", SBUX: "Consumer", HD: "Consumer",
+  LOW: "Consumer", TGT: "Consumer",
+  XOM: "Energy", CVX: "Energy", COP: "Energy",
+  BA: "Industrial", CAT: "Industrial", GE: "Industrial",
+};
+
+export const SECTOR_COLORS: Record<string, string> = {
+  Technology: "bg-sky-400",
+  Finance: "bg-amber-400",
+  Healthcare: "bg-emerald-400",
+  Consumer: "bg-violet-400",
+  Energy: "bg-orange-400",
+  Industrial: "bg-cyan-400",
+  Index: "bg-slate-400",
 };
 
 export const VALID_YEARS = [

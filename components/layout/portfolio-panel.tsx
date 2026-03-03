@@ -2,8 +2,10 @@
 
 import { useSprintStore } from "@/lib/store/sprint-store";
 import { Card } from "@/components/ui/card";
+import { InfoTooltip } from "@/components/ui/tooltip";
 import { formatCurrency, formatPercent, formatShares } from "@/lib/utils/format";
 import { STARTING_BALANCE } from "@/lib/constants/tickers";
+import { GLOSSARY } from "@/lib/constants/glossary";
 
 export function PortfolioPanel() {
   const holdings = useSprintStore((s) => s.holdings);
@@ -31,7 +33,7 @@ export function PortfolioPanel() {
     <Card className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-slate-100 uppercase tracking-wide">
-          Portfolio
+          Portfolio <InfoTooltip text={GLOSSARY.portfolioValue} />
         </h3>
         <div className="text-right">
           <span

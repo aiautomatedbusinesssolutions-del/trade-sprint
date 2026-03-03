@@ -14,7 +14,7 @@ export async function generateAnalysis(
   const tradesSummary = tradeHistory
     .map(
       (t) =>
-        `Month ${t.month + 1}: ${t.side.toUpperCase()} $${t.dollarAmount.toFixed(2)} of ${t.ticker} at $${t.priceAtExecution.toFixed(2)}`
+        `Month ${t.month + 1}: ${t.side.toUpperCase()} $${t.dollarAmount.toFixed(2)} of ${t.ticker} at $${t.priceAtExecution.toFixed(2)}${t.reason ? ` (Reason: "${t.reason}")` : ""}`
     )
     .join("\n");
 
@@ -35,7 +35,7 @@ ${snapshotsSummary}
 
 FINAL RESULT: Started with $${startingBalance.toFixed(2)}, ended with $${finalValue.toFixed(2)} (${totalReturnPercent >= 0 ? "+" : ""}${totalReturnPercent.toFixed(2)}%)
 
-Analyze their trading psychology and behavior. Be encouraging but honest. Use simple, beginner-friendly language (no jargon).
+Analyze their trading psychology and behavior. Be encouraging but honest. Use simple, beginner-friendly language (no jargon). If they provided reasons for their trades, evaluate whether their reasoning was sound and mention this in your analysis.
 
 Respond with ONLY valid JSON in this exact format:
 {

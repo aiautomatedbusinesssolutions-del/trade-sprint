@@ -5,13 +5,16 @@ import { useSprintStore } from "@/lib/store/sprint-store";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { InfoTooltip } from "@/components/ui/tooltip";
 import { formatCurrency, formatPercent } from "@/lib/utils/format";
 import { TICKER_NAMES } from "@/lib/constants/tickers";
+import { GLOSSARY } from "@/lib/constants/glossary";
 
 export function TradePanel() {
   const [search, setSearch] = useState("");
   const [side, setSide] = useState<"buy" | "sell">("buy");
   const [amount, setAmount] = useState("");
+  const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -48,7 +51,7 @@ export function TradePanel() {
       setError("Enter a valid amount");
       return;
     }
-    const result = executeTrade(selectedTicker, dollarAmount, side);
+    const result = executeTrade(selectedTicker, dollarAmount, side, reason);
     if (result) {
       setError(result);
       setSuccess(null);
@@ -59,6 +62,7 @@ export function TradePanel() {
         `${side === "buy" ? "Bought" : "Sold"} ${shares.toFixed(2)} shares of ${selectedTicker}`
       );
       setAmount("");
+      setReason("");
       setTimeout(() => setSuccess(null), 3000);
     }
   };
@@ -140,7 +144,7 @@ export function TradePanel() {
                   isUp ? "text-emerald-400" : "text-rose-400"
                 }`}
               >
-                {formatPercent(change)}
+                {formatPercent(change)} <InfoTooltip text={GLOSSARY.percentChange} />
               </p>
             </div>
           </div>
@@ -222,6 +226,16 @@ export function TradePanel() {
               Max
             </Button>
           </div>
+
+          {/* Trade reasoning (optional) */}
+          <textarea
+            placeholder="Why are you making this trade? (optional)"
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            maxLength={200}
+            rows={2}
+            className="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400/50 transition-colors resize-none"
+          />
 
           {/* Execute */}
           <Button

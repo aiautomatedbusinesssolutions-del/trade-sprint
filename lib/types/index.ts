@@ -21,6 +21,7 @@ export interface Trade {
   priceAtExecution: number;
   shares: number;
   orderIndex: number;
+  reason?: string;
 }
 
 export interface SprintData {

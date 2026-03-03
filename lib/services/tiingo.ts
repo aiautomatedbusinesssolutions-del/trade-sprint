@@ -1,12 +1,13 @@
 import type { MonthlyBar, SprintData } from "@/lib/types";
-import { POPULAR_TICKERS, ALL_TICKERS, PRE_HISTORY_MONTHS, TOTAL_MONTHS } from "@/lib/constants/tickers";
+import { POPULAR_TICKERS, BENCHMARK_TICKER, PRE_HISTORY_MONTHS, TOTAL_MONTHS } from "@/lib/constants/tickers";
 
 const TIINGO_BASE = "https://api.tiingo.com/tiingo/daily";
-const REQUEST_DELAY_MS = 2000; // 2s between each request
+const REQUEST_DELAY_MS = 300; // 300ms between sequential requests (safe for hourly quota)
 
-// Use a trimmed ticker list: popular (15) + a selection of others to stay under hourly quota
-// Tiingo free tier: ~50 requests/hour, so we target ~35 tickers max
+// Use a trimmed ticker list: SPY (benchmark) + popular (15) + extras to stay under hourly quota
+// Tiingo free tier: ~50 requests/hour, so we target ~36 tickers max
 const TIINGO_TICKERS = [
+  BENCHMARK_TICKER, // SPY — always fetch for S&P 500 benchmark
   ...POPULAR_TICKERS,
   // Add some extras from each sector not in POPULAR_TICKERS
   "ADBE", "CRM", "AMD", "PYPL", "SQ",   // Tech

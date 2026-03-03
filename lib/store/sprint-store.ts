@@ -29,7 +29,7 @@ interface SprintActions {
   setLoading: () => void;
   initializeSprint: (data: SprintData) => void;
   selectTicker: (ticker: string | null) => void;
-  executeTrade: (ticker: string, dollarAmount: number, side: "buy" | "sell") => string | null;
+  executeTrade: (ticker: string, dollarAmount: number, side: "buy" | "sell", reason?: string) => string | null;
   advanceMonth: () => void;
   reset: () => void;
   getPrice: (ticker: string, month?: number) => number;
@@ -81,7 +81,7 @@ export const useSprintStore = create<SprintState & SprintActions>()((set, get) =
 
   selectTicker: (ticker) => set({ selectedTicker: ticker }),
 
-  executeTrade: (ticker, dollarAmount, side) => {
+  executeTrade: (ticker, dollarAmount, side, reason) => {
     const state = get();
     const price = getStockPrice(state.stockData, ticker, state.currentMonth);
     if (price <= 0) return "Stock data not available";
@@ -104,6 +104,7 @@ export const useSprintStore = create<SprintState & SprintActions>()((set, get) =
         priceAtExecution: price,
         shares,
         orderIndex: state.tradeHistory.length,
+        reason: reason?.trim() || undefined,
       };
 
       set({
@@ -142,6 +143,7 @@ export const useSprintStore = create<SprintState & SprintActions>()((set, get) =
         priceAtExecution: price,
         shares: sellShares,
         orderIndex: state.tradeHistory.length,
+        reason: reason?.trim() || undefined,
       };
 
       const newHoldings = { ...state.holdings };

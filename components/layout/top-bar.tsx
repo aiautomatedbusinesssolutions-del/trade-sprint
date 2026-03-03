@@ -2,8 +2,10 @@
 
 import { useSprintStore } from "@/lib/store/sprint-store";
 import { ProgressBar } from "@/components/ui/progress-bar";
+import { InfoTooltip } from "@/components/ui/tooltip";
 import { formatCurrency } from "@/lib/utils/format";
 import { TOTAL_MONTHS, STARTING_BALANCE } from "@/lib/constants/tickers";
+import { GLOSSARY } from "@/lib/constants/glossary";
 
 export function TopBar() {
   const currentMonth = useSprintStore((s) => s.currentMonth);
@@ -32,19 +34,19 @@ export function TopBar() {
       {/* Financial summary */}
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <p className="text-xs text-slate-500">Cash</p>
+          <p className="text-xs text-slate-500">Cash <InfoTooltip text={GLOSSARY.cash} /></p>
           <p className="text-sm font-semibold text-slate-100">
             {formatCurrency(cashBalance)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-slate-500">Portfolio</p>
+          <p className="text-xs text-slate-500">Portfolio <InfoTooltip text={GLOSSARY.portfolioValue} /></p>
           <p className="text-sm font-semibold text-slate-100">
             {formatCurrency(totalValue)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-slate-500">Profit / Loss</p>
+          <p className="text-xs text-slate-500">P/L <InfoTooltip text={GLOSSARY.profitLoss} /></p>
           <p
             className={`text-sm font-semibold ${
               isUp ? "text-emerald-400" : "text-rose-400"

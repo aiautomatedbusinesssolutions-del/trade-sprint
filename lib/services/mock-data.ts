@@ -12,6 +12,7 @@ function seededRandom(seed: number): () => number {
 
 // Realistic base prices for known tickers (approximate 2020 prices)
 const BASE_PRICES: Record<string, number> = {
+  SPY: 340,
   AAPL: 130, MSFT: 220, AMZN: 3200, GOOGL: 1750, TSLA: 700,
   META: 270, NVDA: 530, NFLX: 540, ADBE: 470, CRM: 220,
   INTC: 50, AMD: 90, PYPL: 240, SQ: 220, SHOP: 1100,
