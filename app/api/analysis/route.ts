@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { generateAnalysis } from "@/lib/services/claude";
+import { generateAnalysis } from "@/lib/services/gemini";
 import type { Trade, PortfolioSnapshot } from "@/lib/types";
 
 export async function POST(req: Request) {
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
       actualYear: number;
     } = body;
 
-    if (!process.env.ANTHROPIC_API_KEY) {
+    if (!process.env.GEMINI_API_KEY) {
       // Return mock analysis when no API key is configured
       return NextResponse.json({
         summary:
@@ -57,8 +57,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json(analysis);
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
-      { error: "Failed to generate analysis" },
+      { error: "Failed to generate analysis", details: message },
       { status: 500 }
     );
   }

@@ -1,9 +1,5 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { Trade, PortfolioSnapshot, AnalysisResult } from "@/lib/types";
-
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
 
 export async function generateAnalysis(
   tradeHistory: Trade[],
@@ -57,18 +53,15 @@ Respond with ONLY valid JSON in this exact format:
   "archetypeDescription": "A fun 1-2 sentence description of this trader type"
 }`;
 
-  const message = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 1500,
-    messages: [{ role: "user", content: prompt }],
-  });
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-  const textContent = message.content.find((c) => c.type === "text");
-  if (!textContent || textContent.type !== "text") {
-    throw new Error("No text response from Claude");
-  }
+  const result = await model.generateContent(prompt);
+  const text = result.response.text();
 
-  const parsed = JSON.parse(textContent.text);
+  // Strip markdown code fences if Gemini wraps the JSON
+  const cleaned = text.replace(/^```json?\s*\n?/i, "").replace(/\n?```\s*$/i, "").trim();
+  const parsed = JSON.parse(cleaned);
 
   return {
     ...parsed,

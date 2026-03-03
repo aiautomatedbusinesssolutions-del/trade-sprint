@@ -15,12 +15,14 @@ export default function DashboardPage() {
   const status = useSprintStore((s) => s.status);
 
   useEffect(() => {
-    if (status !== "trading") {
+    // Only redirect to home if the sprint hasn't started.
+    // Don't redirect on "finished" — NextMonthButton handles that navigation to /analysis.
+    if (status === "idle" || status === "loading") {
       router.push("/");
     }
   }, [status, router]);
 
-  if (status !== "trading") {
+  if (status !== "trading" && status !== "finished") {
     return null;
   }
 
