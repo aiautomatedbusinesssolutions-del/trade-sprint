@@ -68,3 +68,12 @@ body {
 .animate-delay-800 { animation-delay: 0.8s; }
 .animate-delay-900 { animation-delay: 0.9s; }
 .animate-delay-1000 { animation-delay: 1.0s; }
+
+/* Hide scrollbars but keep scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

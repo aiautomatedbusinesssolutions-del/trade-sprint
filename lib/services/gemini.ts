@@ -61,7 +61,18 @@ Respond with ONLY valid JSON in this exact format:
 
   // Strip markdown code fences if Gemini wraps the JSON
   const cleaned = text.replace(/^```json?\s*\n?/i, "").replace(/\n?```\s*$/i, "").trim();
-  const parsed = JSON.parse(cleaned);
+
+  let parsed;
+  try {
+    parsed = JSON.parse(cleaned);
+  } catch {
+    console.error("Failed to parse Gemini response:", cleaned.slice(0, 200));
+    throw new Error("Failed to parse analysis response");
+  }
+
+  if (!parsed.psychologyBreakdown || !Array.isArray(parsed.psychologyBreakdown)) {
+    throw new Error("Invalid analysis structure from Gemini");
+  }
 
   return {
     ...parsed,
