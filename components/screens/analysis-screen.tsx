@@ -5,12 +5,23 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProgressBar } from "@/components/ui/progress-bar";
 import { formatCurrency, formatPercent } from "@/lib/utils/format";
-import type { AnalysisResult } from "@/lib/types";
+import { STARTING_BALANCE } from "@/lib/constants/tickers";
+import type { AnalysisResult, PortfolioSnapshot } from "@/lib/types";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+} from "recharts";
 
 interface AnalysisScreenProps {
   analysis: AnalysisResult;
   actualYear: number;
   finalValue: number;
+  portfolioSnapshots: PortfolioSnapshot[];
   onNewSprint: () => void;
 }
 
@@ -38,28 +49,67 @@ function ScoreBar({ score, label }: { score: number; label: string }) {
   );
 }
 
+interface PortfolioTooltipProps {
+  active?: boolean;
+  payload?: { payload: { label: string; value: number } }[];
+}
+
+function PortfolioTooltip({ active, payload }: PortfolioTooltipProps) {
+  if (!active || !payload?.length) return null;
+  const data = payload[0].payload;
+  const change = data.value - STARTING_BALANCE;
+  const changePercent = (change / STARTING_BALANCE) * 100;
+  const isUp = change >= 0;
+  return (
+    <div className="bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs space-y-1">
+      <p className="font-medium text-slate-100">{data.label}</p>
+      <p className="text-slate-300">{formatCurrency(data.value)}</p>
+      <p className={isUp ? "text-emerald-400" : "text-rose-400"}>
+        {isUp ? "+" : ""}
+        {formatCurrency(change)} ({formatPercent(changePercent)})
+      </p>
+    </div>
+  );
+}
+
 export function AnalysisScreen({
   analysis,
   actualYear,
   finalValue,
+  portfolioSnapshots,
   onNewSprint,
 }: AnalysisScreenProps) {
-  const totalReturn = finalValue - 10000;
+  const totalReturn = finalValue - STARTING_BALANCE;
   const isUp = totalReturn >= 0;
+
+  // Build chart data: start with initial balance, then each month's snapshot
+  const chartData = [
+    { label: "Start", value: STARTING_BALANCE },
+    ...portfolioSnapshots.map((s) => ({
+      label: `Mo ${s.month + 1}`,
+      value: s.totalValue,
+    })),
+  ];
+
+  // Determine chart color based on overall performance
+  const chartColor = isUp ? "#34d399" : "#fb7185"; // emerald-400 or rose-400
+  const gradientId = "portfolioGradient";
 
   return (
     <div className="min-h-screen bg-slate-950 p-4 lg:p-6">
       <div className="mx-auto max-w-2xl space-y-6 py-8">
         {/* Year Reveal */}
         <div className="text-center space-y-2">
-          <p className="text-sm text-slate-500 uppercase tracking-wider">
+          <p className="text-sm text-slate-500 uppercase tracking-wider animate-fade-in-up">
             Your Sprint Took Place In
           </p>
-          <h1 className="text-6xl font-bold text-sky-400">{actualYear}</h1>
+          <h1 className="text-6xl font-bold text-sky-400 animate-year-reveal">
+            {actualYear}
+          </h1>
         </div>
 
         {/* Performance Summary */}
-        <Card className="text-center space-y-3">
+        <Card className="text-center space-y-3 animate-fade-in-up animate-delay-300">
           <p className="text-sm text-slate-400">Final Portfolio Value</p>
           <p className="text-4xl font-bold text-slate-100">
             {formatCurrency(finalValue)}
@@ -75,8 +125,59 @@ export function AnalysisScreen({
           </div>
         </Card>
 
+        {/* Portfolio Performance Chart */}
+        <Card className="space-y-3 animate-fade-in-up animate-delay-400">
+          <h3 className="text-sm font-semibold text-slate-100 uppercase tracking-wide">
+            Portfolio Value Over Time
+          </h3>
+          <div className="h-56">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={chartData}>
+                <defs>
+                  <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor={chartColor} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={chartColor} stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <XAxis
+                  dataKey="label"
+                  tick={{ fill: "#94a3b8", fontSize: 11 }}
+                  axisLine={{ stroke: "#334155" }}
+                  tickLine={false}
+                  interval="preserveStartEnd"
+                />
+                <YAxis
+                  tick={{ fill: "#94a3b8", fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                  tickFormatter={(v: number) => `$${(v / 1000).toFixed(1)}k`}
+                  width={55}
+                  domain={["auto", "auto"]}
+                />
+                <Tooltip content={<PortfolioTooltip />} />
+                <ReferenceLine
+                  y={STARTING_BALANCE}
+                  stroke="#475569"
+                  strokeDasharray="4 4"
+                  label={{ value: "$10k", fill: "#64748b", fontSize: 10, position: "right" }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke={chartColor}
+                  strokeWidth={2}
+                  fill={`url(#${gradientId})`}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <p className="text-xs text-slate-500 text-center">
+            Dashed line shows your starting balance of {formatCurrency(STARTING_BALANCE)}.
+          </p>
+        </Card>
+
         {/* Trader Archetype */}
-        <Card className="text-center space-y-2 border-sky-500/20">
+        <Card className="text-center space-y-2 border-sky-500/20 animate-fade-in-up animate-delay-500">
           <p className="text-xs text-slate-500 uppercase tracking-wider">
             Your Trader Type
           </p>
@@ -89,14 +190,14 @@ export function AnalysisScreen({
         </Card>
 
         {/* Summary */}
-        <Card>
+        <Card className="animate-fade-in-up animate-delay-600">
           <p className="text-sm text-slate-300 leading-relaxed">
             {analysis.summary}
           </p>
         </Card>
 
         {/* Psychology Breakdown */}
-        <Card className="space-y-4">
+        <Card className="space-y-4 animate-fade-in-up animate-delay-700">
           <h3 className="text-sm font-semibold text-slate-100 uppercase tracking-wide">
             Trading Psychology
           </h3>
@@ -109,7 +210,7 @@ export function AnalysisScreen({
         </Card>
 
         {/* Strengths & Improvements */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in-up animate-delay-800">
           <Card className="space-y-3">
             <h3 className="text-sm font-semibold text-emerald-400 uppercase tracking-wide">
               Strengths
@@ -142,7 +243,7 @@ export function AnalysisScreen({
         <Button
           variant="primary"
           size="lg"
-          className="w-full text-base font-bold"
+          className="w-full text-base font-bold animate-fade-in-up animate-delay-900"
           onClick={onNewSprint}
         >
           Start a New Sprint

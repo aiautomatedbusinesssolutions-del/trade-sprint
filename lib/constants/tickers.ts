@@ -86,9 +86,11 @@ export const TICKER_NAMES: Record<string, string> = {
 };
 
 export const VALID_YEARS = [
-  2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023,
+  2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
+  2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019,
+  2020, 2021, 2022, 2023, 2024, 2025,
 ];
 
 export const STARTING_BALANCE = 10000;
 export const TOTAL_MONTHS = 12;
-export const PRE_HISTORY_MONTHS = 6;
+export const PRE_HISTORY_MONTHS = 36;

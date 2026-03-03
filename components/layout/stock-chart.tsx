@@ -16,7 +16,7 @@ import {
 
 interface ChartTooltipProps {
   active?: boolean;
-  payload?: { payload: { label: string; close: number; open: number; high: number; low: number } }[];
+  payload?: { payload: { tooltipLabel: string; close: number; open: number; high: number; low: number } }[];
 }
 
 function ChartTooltip({ active, payload }: ChartTooltipProps) {
@@ -24,7 +24,7 @@ function ChartTooltip({ active, payload }: ChartTooltipProps) {
   const data = payload[0].payload;
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs space-y-1">
-      <p className="font-medium text-slate-100">{data.label}</p>
+      <p className="font-medium text-slate-100">{data.tooltipLabel}</p>
       <div className="grid grid-cols-2 gap-x-3 text-slate-400">
         <span>Open: {formatCurrency(data.open)}</span>
         <span>Close: {formatCurrency(data.close)}</span>
@@ -56,8 +56,26 @@ export function StockChart() {
   const chartData = bars.map((bar, i) => {
     const isPreHistory = i < PRE_HISTORY_MONTHS;
     const sprintMonth = i - PRE_HISTORY_MONTHS + 1;
+    // Pre-history: show "-3Y", "-2Y", "-1Y" at year boundaries, empty otherwise
+    // Sprint months: show "Mo 1" through "Mo 12"
+    let label: string;
+    if (isPreHistory) {
+      const monthsBeforeSprint = PRE_HISTORY_MONTHS - i;
+      if (monthsBeforeSprint % 12 === 0) {
+        label = `-${monthsBeforeSprint / 12}Y`;
+      } else if (monthsBeforeSprint === 6) {
+        label = "-6M";
+      } else {
+        label = "";
+      }
+    } else {
+      label = `Mo ${sprintMonth}`;
+    }
     return {
-      label: isPreHistory ? `Prior ${i + 1}` : `Mo ${sprintMonth}`,
+      label,
+      tooltipLabel: isPreHistory
+        ? `${PRE_HISTORY_MONTHS - i} months before sprint`
+        : `Month ${sprintMonth} of sprint`,
       open: bar.open,
       high: bar.high,
       low: bar.low,
@@ -110,7 +128,7 @@ export function StockChart() {
               tick={{ fill: "#94a3b8", fontSize: 11 }}
               axisLine={{ stroke: "#334155" }}
               tickLine={false}
-              interval="preserveStartEnd"
+              interval={0}
             />
             <YAxis
               tick={{ fill: "#94a3b8", fontSize: 12 }}
@@ -139,7 +157,7 @@ export function StockChart() {
       </div>
 
       <p className="text-xs text-slate-500 text-center">
-        Dashed line marks where your sprint begins. Left side shows prior price history.
+        Dashed line marks where your sprint begins. Left side shows 3 years of prior price history.
       </p>
     </Card>
   );

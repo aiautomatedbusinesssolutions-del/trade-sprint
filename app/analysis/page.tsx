@@ -78,6 +78,7 @@ export default function AnalysisPage() {
       analysis={analysis}
       actualYear={actualYear}
       finalValue={finalValue}
+      portfolioSnapshots={portfolioSnapshots}
       onNewSprint={() => {
         reset();
         router.push("/");

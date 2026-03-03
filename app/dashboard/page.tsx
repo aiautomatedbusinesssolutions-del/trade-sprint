@@ -8,6 +8,7 @@ import { StockChart } from "@/components/layout/stock-chart";
 import { TradePanel } from "@/components/layout/trade-panel";
 import { PortfolioPanel } from "@/components/layout/portfolio-panel";
 import { SuggestedStocks } from "@/components/layout/suggested-stocks";
+import { TradeHistory } from "@/components/layout/trade-history";
 import { NextMonthButton } from "@/components/layout/next-month-button";
 
 export default function DashboardPage() {
@@ -34,6 +35,7 @@ export default function DashboardPage() {
           <TopBar />
           <StockChart />
           <SuggestedStocks />
+          <TradeHistory />
         </div>
 
         {/* Right column (1/3) */}

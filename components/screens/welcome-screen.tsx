@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 interface WelcomeScreenProps {
   onStart: () => void;
   isLoading: boolean;
+  error?: string | null;
 }
 
 const rules = [
@@ -29,7 +30,7 @@ const rules = [
   },
 ];
 
-export function WelcomeScreen({ onStart, isLoading }: WelcomeScreenProps) {
+export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
       <div className="w-full max-w-lg space-y-8 text-center">
@@ -57,6 +58,12 @@ export function WelcomeScreen({ onStart, isLoading }: WelcomeScreenProps) {
             </Card>
           ))}
         </div>
+
+        {error && (
+          <div className="rounded-lg bg-rose-500/10 border border-rose-500/20 p-3">
+            <p className="text-sm text-rose-400">{error}</p>
+          </div>
+        )}
 
         <Button
           variant="success"
