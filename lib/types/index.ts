@@ -52,3 +52,15 @@ export interface AnalysisResult {
   totalReturn: number;
   totalReturnPercent: number;
 }
+
+export interface LeaderboardEntry {
+  id: number;
+  player_name: string;
+  return_percent: number;
+  final_value: number;
+  trade_count: number;
+  year_traded: number;
+  archetype: string;
+  is_mock_data: boolean;
+  created_at: string;
+}

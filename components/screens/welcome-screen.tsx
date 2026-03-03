@@ -75,6 +75,13 @@ export function WelcomeScreen({ onStart, isLoading, error }: WelcomeScreenProps)
           {isLoading ? "Preparing Markets..." : "Start Sprint"}
         </Button>
 
+        <a
+          href="/leaderboard"
+          className="block text-sm text-sky-400 hover:text-sky-300 underline underline-offset-2"
+        >
+          View Leaderboard
+        </a>
+
         <p className="text-xs text-slate-500">
           This is a learning tool using simulated markets. Past performance
           doesn&apos;t predict future results.

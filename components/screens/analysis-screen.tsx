@@ -9,6 +9,7 @@ import { formatCurrency, formatPercent } from "@/lib/utils/format";
 import { STARTING_BALANCE } from "@/lib/constants/tickers";
 import { GLOSSARY } from "@/lib/constants/glossary";
 import { YEAR_EVENTS } from "@/lib/constants/year-events";
+import { LeaderboardSubmit } from "@/components/ui/leaderboard-submit";
 import type { AnalysisResult, PortfolioSnapshot } from "@/lib/types";
 import {
   AreaChart,
@@ -31,6 +32,8 @@ interface AnalysisScreenProps {
   finalValue: number;
   portfolioSnapshots: PortfolioSnapshot[];
   benchmarkReturn: BenchmarkReturn | null;
+  tradeCount: number;
+  isMockData: boolean;
   onNewSprint: () => void;
 }
 
@@ -87,6 +90,8 @@ export function AnalysisScreen({
   finalValue,
   portfolioSnapshots,
   benchmarkReturn,
+  tradeCount,
+  isMockData,
   onNewSprint,
 }: AnalysisScreenProps) {
   const totalReturn = finalValue - STARTING_BALANCE;
@@ -320,15 +325,32 @@ export function AnalysisScreen({
           </Card>
         </div>
 
+        {/* Leaderboard Submit */}
+        <LeaderboardSubmit
+          returnPercent={analysis.totalReturnPercent}
+          finalValue={finalValue}
+          tradeCount={tradeCount}
+          yearTraded={actualYear}
+          archetype={analysis.traderArchetype}
+          isMockData={isMockData}
+        />
+
         {/* New Sprint */}
         <Button
           variant="primary"
           size="lg"
-          className="w-full text-base font-bold animate-fade-in-up animate-delay-900"
+          className="w-full text-base font-bold animate-fade-in-up animate-delay-1000"
           onClick={onNewSprint}
         >
           Start a New Sprint
         </Button>
+
+        <a
+          href="/leaderboard"
+          className="block text-center text-sm text-sky-400 hover:text-sky-300 underline underline-offset-2"
+        >
+          View Leaderboard
+        </a>
 
         <p className="text-xs text-slate-500 text-center">
           This analysis is for learning purposes only and is not financial advice.

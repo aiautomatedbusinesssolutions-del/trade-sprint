@@ -17,6 +17,7 @@ export default function AnalysisPage() {
   const portfolioSnapshots = useSprintStore((s) => s.portfolioSnapshots);
   const stockData = useSprintStore((s) => s.stockData);
   const getPortfolioValue = useSprintStore((s) => s.getPortfolioValue);
+  const isMockData = useSprintStore((s) => s.isMockData);
   const reset = useSprintStore((s) => s.reset);
 
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
@@ -90,6 +91,8 @@ export default function AnalysisPage() {
       finalValue={finalValue}
       portfolioSnapshots={portfolioSnapshots}
       benchmarkReturn={benchmarkReturn}
+      tradeCount={tradeHistory.length}
+      isMockData={isMockData}
       onNewSprint={() => {
         reset();
         router.push("/");
