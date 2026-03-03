@@ -38,9 +38,9 @@ export function NextMonthButton() {
 
       {/* Confirmation modal */}
       {showConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4" role="dialog" aria-modal="true" aria-labelledby="confirm-dialog-title">
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 w-full max-w-sm space-y-4">
-            <h3 className="text-lg font-semibold text-slate-100">
+            <h3 id="confirm-dialog-title" className="text-lg font-semibold text-slate-100">
               {isLastMonth ? "Finish Your Sprint?" : "Move to Next Month?"}
             </h3>
             <p className="text-sm text-slate-400">

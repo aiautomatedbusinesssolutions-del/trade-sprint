@@ -11,6 +11,7 @@ export function TopBar() {
   const currentMonth = useSprintStore((s) => s.currentMonth);
   const cashBalance = useSprintStore((s) => s.cashBalance);
   const getPortfolioValue = useSprintStore((s) => s.getPortfolioValue);
+  const isMockData = useSprintStore((s) => s.isMockData);
 
   const totalValue = getPortfolioValue();
   const pnl = totalValue - STARTING_BALANCE;
@@ -18,6 +19,11 @@ export function TopBar() {
 
   return (
     <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-3">
+      {isMockData && (
+        <div className="bg-amber-900/30 border border-amber-700/40 rounded-lg px-3 py-1.5 text-xs text-amber-400 text-center">
+          Using simulated data — real market data unavailable
+        </div>
+      )}
       {/* Month progress */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useSprintStore } from "@/lib/store/sprint-store";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,17 @@ export function TradePanel() {
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const successTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Clear success message after 3s with proper cleanup
+  useEffect(() => {
+    if (success) {
+      successTimer.current = setTimeout(() => setSuccess(null), 3000);
+    }
+    return () => {
+      if (successTimer.current) clearTimeout(successTimer.current);
+    };
+  }, [success]);
 
   const selectedTicker = useSprintStore((s) => s.selectedTicker);
   const availableTickers = useSprintStore((s) => s.availableTickers);
@@ -63,7 +74,6 @@ export function TradePanel() {
       );
       setAmount("");
       setReason("");
-      setTimeout(() => setSuccess(null), 3000);
     }
   };
 
@@ -87,13 +97,14 @@ export function TradePanel() {
       <div className="relative">
         <Input
           placeholder="Search stocks..."
+          aria-label="Search for a stock ticker"
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
             setError(null);
           }}
           icon={
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           }
@@ -104,6 +115,7 @@ export function TradePanel() {
               <button
                 key={ticker}
                 className="w-full px-3 py-2 text-left text-sm hover:bg-slate-700 transition-colors flex items-center justify-between"
+                aria-label={`Select ${ticker} — ${TICKER_NAMES[ticker]}`}
                 onClick={() => {
                   selectTicker(ticker);
                   setSearch("");
@@ -184,6 +196,7 @@ export function TradePanel() {
           <Input
             type="number"
             placeholder="Enter dollar amount"
+            aria-label="Trade amount in dollars"
             value={amount}
             onChange={(e) => {
               setAmount(e.target.value);
@@ -230,6 +243,7 @@ export function TradePanel() {
           {/* Trade reasoning (optional) */}
           <textarea
             placeholder="Why are you making this trade? (optional)"
+            aria-label="Trade reasoning (optional)"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             maxLength={200}

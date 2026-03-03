@@ -28,6 +28,7 @@ export interface SprintData {
   actualYear: number;
   stockData: Record<string, MonthlyBar[]>;
   availableTickers: string[];
+  isMockData?: boolean;
 }
 
 export interface PortfolioSnapshot {

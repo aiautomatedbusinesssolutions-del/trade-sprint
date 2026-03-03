@@ -20,6 +20,7 @@ function StockChip({
   return (
     <button
       onClick={onClick}
+      aria-label={`Select ${ticker}`}
       className="flex-shrink-0 bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 hover:border-slate-600 transition-colors min-w-[120px]"
     >
       <p className="text-sm font-medium text-slate-100">{ticker}</p>

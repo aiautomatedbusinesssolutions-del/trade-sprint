@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { Holding, Trade, MonthlyBar, SprintData, PortfolioSnapshot } from "@/lib/types";
 import {
   getStockPrice,
@@ -23,6 +24,7 @@ interface SprintState {
   tradeHistory: Trade[];
   portfolioSnapshots: PortfolioSnapshot[];
   selectedTicker: string | null;
+  isMockData: boolean;
 }
 
 interface SprintActions {
@@ -51,9 +53,12 @@ const initialState: SprintState = {
   tradeHistory: [],
   portfolioSnapshots: [],
   selectedTicker: null,
+  isMockData: false,
 };
 
-export const useSprintStore = create<SprintState & SprintActions>()((set, get) => ({
+export const useSprintStore = create<SprintState & SprintActions>()(
+  persist(
+    (set, get) => ({
   ...initialState,
 
   setLoading: () => set({ status: "loading" }),
@@ -76,6 +81,7 @@ export const useSprintStore = create<SprintState & SprintActions>()((set, get) =
       tradeHistory: [],
       portfolioSnapshots: [snapshot],
       selectedTicker: data.availableTickers[0] ?? null,
+      isMockData: data.isMockData ?? false,
     });
   },
 
@@ -257,4 +263,22 @@ export const useSprintStore = create<SprintState & SprintActions>()((set, get) =
     const state = get();
     return getTrendingStocks(state.stockData, state.currentMonth);
   },
-}));
+}),
+    {
+      name: "tradesprint-session",
+      partialize: (state) => ({
+        status: state.status,
+        currentMonth: state.currentMonth,
+        actualYear: state.actualYear,
+        cashBalance: state.cashBalance,
+        holdings: state.holdings,
+        stockData: state.stockData,
+        availableTickers: state.availableTickers,
+        tradeHistory: state.tradeHistory,
+        portfolioSnapshots: state.portfolioSnapshots,
+        selectedTicker: state.selectedTicker,
+        isMockData: state.isMockData,
+      }),
+    },
+  ),
+);

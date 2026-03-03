@@ -63,6 +63,7 @@ export function PortfolioPanel() {
               <button
                 key={holding.ticker}
                 className="w-full flex items-center justify-between py-2 px-2 rounded-lg hover:bg-slate-800/50 transition-colors text-left"
+                aria-label={`Select ${holding.ticker} — ${formatShares(holding.shares)} shares, ${formatCurrency(value)}`}
                 onClick={() => selectTicker(holding.ticker)}
               >
                 <div>

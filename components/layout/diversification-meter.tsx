@@ -91,7 +91,8 @@ export function DiversificationMeter() {
             key={sector}
             className={`${SECTOR_COLORS[sector] ?? "bg-slate-500"} transition-all duration-500`}
             style={{ width: `${percent}%` }}
-            title={`${sector}: ${percent.toFixed(1)}%`}
+            role="img"
+            aria-label={`${sector}: ${percent.toFixed(1)}%`}
           />
         ))}
       </div>
