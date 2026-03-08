@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { LeaderboardTable } from "@/components/screens/leaderboard-table";
 
 export const metadata: Metadata = {
@@ -18,12 +19,12 @@ export default function LeaderboardPage() {
         </div>
         <LeaderboardTable />
         <div className="text-center">
-          <a
+          <Link
             href="/"
             className="text-sm text-sky-400 hover:text-sky-300 underline underline-offset-2"
           >
             Start a Sprint
-          </a>
+          </Link>
         </div>
       </div>
     </div>

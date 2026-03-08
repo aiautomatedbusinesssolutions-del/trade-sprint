@@ -3,7 +3,7 @@
 import { useSprintStore } from "@/lib/store/sprint-store";
 import { Card } from "@/components/ui/card";
 import { formatCurrency, formatPercent } from "@/lib/utils/format";
-import { POPULAR_TICKERS, TICKER_NAMES } from "@/lib/constants/tickers";
+import { POPULAR_TICKERS } from "@/lib/constants/tickers";
 
 function StockChip({
   ticker,

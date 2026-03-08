@@ -74,7 +74,6 @@ function generateTickerData(
 export function generateMockSprintData(): SprintData {
   const yearIndex = Math.floor(Math.random() * VALID_YEARS.length);
   const actualYear = VALID_YEARS[yearIndex];
-  const rng = seededRandom(actualYear * 31337);
 
   const stockData: Record<string, MonthlyBar[]> = {};
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback } from "react";
 
 interface TooltipProps {
   text: string;
@@ -19,14 +19,19 @@ export function InfoTooltip({ text, className }: TooltipProps) {
     setPosition(rect.top < 100 ? "below" : "above");
   }, []);
 
-  useEffect(() => {
-    if (isVisible) updatePosition();
-  }, [isVisible, updatePosition]);
+  const showTooltip = useCallback(() => {
+    updatePosition();
+    setIsVisible(true);
+  }, [updatePosition]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      setIsVisible((v) => !v);
+      if (isVisible) {
+        setIsVisible(false);
+      } else {
+        showTooltip();
+      }
     } else if (e.key === "Escape") {
       setIsVisible(false);
     }
@@ -36,9 +41,9 @@ export function InfoTooltip({ text, className }: TooltipProps) {
     <span
       ref={triggerRef}
       className={`relative inline-flex items-center ${className ?? ""}`}
-      onMouseEnter={() => setIsVisible(true)}
+      onMouseEnter={showTooltip}
       onMouseLeave={() => setIsVisible(false)}
-      onClick={() => setIsVisible((v) => !v)}
+      onClick={() => (isVisible ? setIsVisible(false) : showTooltip())}
       onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
